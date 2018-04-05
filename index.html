@@ -15,11 +15,13 @@
 <script src="https://code.highcharts.com/stock/indicators/volume-by-price.js"></script>
 
 <script type="text/javascript">
+// var url = 'https://www.highcharts.com/samples/data/aapl-ohlcv.json';
+// var url = 'https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=180&after=1522135440'
 
-$.getJSON('https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=180&after=1522135440', function (full_data) {
+$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
 
     // split the data set into ohlc and volume
-    data = full_data["result"]["180"]
+    // data = full_data["result"]["180"]
 
     var ohlc = [],
         volume = [],
@@ -53,6 +55,17 @@ $.getJSON('https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=180&a
 
     // create the chart
     Highcharts.stockChart('container', {
+
+        chart: {
+            events: {
+                click: function(event) {
+                    alert (
+                  'x: '+ Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].value) +', ' +
+                  'y: '+ event.yAxis[0].value
+                    );
+                }
+            }
+        },
 
         rangeSelector: {
             selected: 2
@@ -99,8 +112,24 @@ $.getJSON('https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=180&a
             split: true
         },
 
+        // plotOptions: {
+        //     series: {
+        //         dataGrouping: {
+        //             units: groupingUnits
+        //         }
+        //     }
+        // },
+
         plotOptions: {
             series: {
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function() {
+                            alert ('open: ' + this.open + ', high: '+ this.high + ', low: '+ this.low + ', close: '+ this.close );
+                        }
+                    }
+                },
                 dataGrouping: {
                     units: groupingUnits
                 }
