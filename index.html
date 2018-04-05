@@ -56,23 +56,23 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
     // create the chart
     Highcharts.stockChart('container', {
 
-        chart: {
-            events: {
-                click: function(event) {
-                    alert (
-                  'x: '+ Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].value) +', ' +
-                  'y: '+ event.yAxis[0].value
-                    );
-                }
-            }
-        },
+        // chart: {
+        //     events: {
+        //         click: function(event) {
+        //             alert (
+        //           'x: '+ Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].value) +', ' +
+        //           'y: '+ event.yAxis[0].value
+        //             );
+        //         }
+        //     }
+        // },
 
         rangeSelector: {
             selected: 2
         },
 
         title: {
-            text: 'AAPL Historical'
+            text: 'Bitcoin Historical Demo'
         },
 
         subtitle: {
@@ -126,7 +126,9 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
                 point: {
                     events: {
                         click: function() {
-                            alert ('open: ' + this.open + ', high: '+ this.high + ', low: '+ this.low + ', close: '+ this.close );
+                            if (this.series.userOptions.type === 'sma') {
+                                alert ('value: ' + this.y);
+                            }
                         }
                     }
                 },
