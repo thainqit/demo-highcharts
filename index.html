@@ -6,6 +6,7 @@
 <body>
 
 <div id="container" style="height: 600px; min-width: 310px"></div>
+<div id="reporting"></div>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
@@ -123,17 +124,44 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
         plotOptions: {
             series: {
                 cursor: 'pointer',
+                dataGrouping: {
+                    units: groupingUnits
+                },
                 point: {
                     events: {
                         click: function() {
                             if (this.series.userOptions.type === 'sma') {
                                 alert ('value: ' + this.y);
                             }
+                        },
+                        mouseOver: function () {
+                            var chart = this.series.chart;
+                            if (!chart.lbl) {
+                                chart.lbl = chart.renderer.label('')
+                                    .attr({
+                                        padding: 10,
+                                        r: 10,
+                                        fill: Highcharts.getOptions().colors[1]
+                                    })
+                                    .css({
+                                        color: '#FFFFFF'
+                                    })
+                                    .add();
+                            }
+                            chart.lbl
+                                .show()
+                                .attr({
+                                    text: 'x: ' + this.x + ', y: ' + this.y
+                                });
                         }
                     }
                 },
-                dataGrouping: {
-                    units: groupingUnits
+                events: {
+                    mouseOut: function () {
+                        if (this.chart.lbl) {
+                            this.chart.lbl.hide();
+                        }
+                    }
                 }
             }
         },
