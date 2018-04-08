@@ -2,13 +2,121 @@
 <html>
 <head>
   <title></title>
+  <style type="text/css">
+    #container {
+      position: relative;
+    }
+    #popup {
+      display: none;
+      position: absolute;
+      top: 150px;
+      width: 302px;
+      background-color: white;
+      border: 1px solid #d4d4d1;
+    }
+    .close-popup {
+      position: absolute;
+      right: 10px;
+      font-size: 26px;
+    }
+
+    .tabs-menu {
+        height: 30px;
+        float: left;
+        clear: both;
+        list-style: none;
+        padding: 0px;
+        margin: 0px;
+        width: 300px;
+        background: white;
+    }
+
+    .tabs-menu li {
+        height: 30px;
+        line-height: 30px;
+        float: left;
+        margin-right: 10px;
+        background-color: #ccc;
+        border-top: 1px solid #d4d4d1;
+        border-right: 1px solid #d4d4d1;
+        border-left: 1px solid #d4d4d1;
+    }
+
+    .tabs-menu li.current {
+        position: relative;
+        background-color: #fff;
+        border-bottom: 1px solid #fff;
+        z-index: 5;
+    }
+
+    .tabs-menu li a {
+        padding: 10px;
+        text-transform: uppercase;
+        color: #fff;
+        text-decoration: none; 
+    }
+
+    .tabs-menu .current a {
+        color: #2e7da3;
+    }
+
+    .tab {
+        border-top: 1px solid #d4d4d1;
+        background-color: #fff;
+        float: left;
+        margin-bottom: 20px;
+        width: auto;
+    }
+
+    .tab-content {
+        width: 290px;
+        padding: 5px;
+        display: none;
+    }
+
+    #tab-1 {
+     display: block;   
+    }
+  </style>
 </head>
 <body>
 
-<div id="container" style="height: 600px; min-width: 310px"></div>
-<div id="reporting"></div>
+<div id="container">
+  <div id="chart" style="height: 600px; min-width: 310px"></div>
+  <div id="popup" class="ui-widget-content">
+    <div class="close-popup">X</div>
+    <ul class="tabs-menu">
+        <li class="current"><a href="#tab-1">Tab 1</a></li>
+        <li><a href="#tab-2">Tab 2</a></li>
+        <li><a href="#tab-3">Tab 3</a></li>
+    </ul>
+    <div class="tab">
+        <div id="tab-1" class="tab-content">
+          <p>click to sma</p>
+          <label>Value:</label> <input type="text" name="sma-value" class="sma-value" />
+        </div>
+        <div id="tab-2" class="tab-content">
+          <p>click to candlestick</p>
+          <label>open:</label> <input type="text" name="candlestick-open" class="candlestick-open" /><br />
+          <label>high:</label> <input type="text" name="candlestick-high" class="candlestick-high" /><br />
+          <label>low:</label> <input type="text" name="candlestick-low" class="candlestick-low" /><br />
+          <label>close:</label> <input type="text" name="candlestick-close" class="candlestick-close" /><br />
+        </div>
+        <div id="tab-3" class="tab-content">
+            <p>Duis egestas fermentum ipsum et commodo.</p>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+  crossorigin="anonymous"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
@@ -16,13 +124,36 @@
 <script src="https://code.highcharts.com/stock/indicators/volume-by-price.js"></script>
 
 <script type="text/javascript">
+
+$(function() {
+  $("#popup").draggable();
+  $(".tabs-menu a").click(function(event) {
+      event.preventDefault();
+      $(this).parent().addClass("current");
+      $(this).parent().siblings().removeClass("current");
+      var tab = $(this).attr("href");
+      $(".tab-content").not(tab).css("display", "none");
+      $(tab).fadeIn();
+  });
+
+  var left = $( window ).width() / 2 - $('#popup').width() / 2;
+  var top = $( window ).height() / 2 - $('#popup').height() / 2;
+  $('#popup').css('left', left);
+  $('#popup').css('top', top);
+
+  $('.close-popup').click(function(){
+    $('#popup').hide();
+  });
+
+});
+
 // var url = 'https://www.highcharts.com/samples/data/aapl-ohlcv.json';
 // var url = 'https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=180&after=1522135440'
 
-$.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
+$.getJSON('https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=180&after=1522135440', function (full_data) {
 
     // split the data set into ohlc and volume
-    // data = full_data["result"]["180"]
+    data = full_data["result"]["180"]
 
     var ohlc = [],
         volume = [],
@@ -55,8 +186,9 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
 
 
     // create the chart
-    Highcharts.stockChart('container', {
+    Highcharts.stockChart('chart', {
 
+        // click in char  
         // chart: {
         //     events: {
         //         click: function(event) {
@@ -130,39 +262,51 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
                 point: {
                     events: {
                         click: function() {
+                            $('#popup').show();
+                            $('.tab-content').hide();
+                            $('.tabs-menu li').removeClass("current");
                             if (this.series.userOptions.type === 'sma') {
-                                alert ('value: ' + this.y);
+                              $('#tab-1').show();
+                              $('a[href^="#tab-1"]').parent().addClass("current");
+                              $('.sma-value').val(this.y);
+                            } else if (this.series.userOptions.type === 'candlestick') {
+                              $('#tab-2').show();
+                              $('a[href^="#tab-2"]').parent().addClass("current");
+                              $('.candlestick-open').val(this.open);
+                              $('.candlestick-high').val(this.high);
+                              $('.candlestick-low').val(this.low);
+                              $('.candlestick-close').val(this.close);
                             }
                         },
-                        mouseOver: function () {
-                            var chart = this.series.chart;
-                            if (!chart.lbl) {
-                                chart.lbl = chart.renderer.label('')
-                                    .attr({
-                                        padding: 10,
-                                        r: 10,
-                                        fill: Highcharts.getOptions().colors[1]
-                                    })
-                                    .css({
-                                        color: '#FFFFFF'
-                                    })
-                                    .add();
-                            }
-                            chart.lbl
-                                .show()
-                                .attr({
-                                    text: 'x: ' + this.x + ', y: ' + this.y
-                                });
-                        }
+                        // mouseOver: function () {
+                        //     var chart = this.series.chart;
+                        //     if (!chart.lbl) {
+                        //         chart.lbl = chart.renderer.label('')
+                        //             .attr({
+                        //                 padding: 10,
+                        //                 r: 10,
+                        //                 fill: Highcharts.getOptions().colors[1]
+                        //             })
+                        //             .css({
+                        //                 color: '#FFFFFF'
+                        //             })
+                        //             .add();
+                        //     }
+                        //     chart.lbl
+                        //         .show()
+                        //         .attr({
+                        //             text: 'x: ' + this.x + ', y: ' + this.y
+                        //         });
+                        // }
                     }
                 },
-                events: {
-                    mouseOut: function () {
-                        if (this.chart.lbl) {
-                            this.chart.lbl.hide();
-                        }
-                    }
-                }
+                // events: {
+                //     mouseOut: function () {
+                //         if (this.chart.lbl) {
+                //             this.chart.lbl.hide();
+                //         }
+                //     }
+                // }
             }
         },
 
@@ -179,18 +323,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
             data: volume,
             yAxis: 1
         }, {
-            type: 'vbp',
-            linkedTo: 'aapl',
-            params: {
-                volumeSeriesID: 'volume'
-            },
-            dataLabels: {
-                enabled: false
-            },
-            zoneLines: {
-                enabled: false
-            }
-        }, {
             type: 'sma',
             linkedTo: 'aapl',
             zIndex: 1,
@@ -200,10 +332,6 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
         }]
     });
 });
-
-// $('#container').on('click', function() {
-//   alert('Hello world again!!!');
-// });
 
 </script>
 </body>
