@@ -21,95 +21,111 @@
     }
 
     .tabs-menu {
-        height: 30px;
-        float: left;
-        clear: both;
-        list-style: none;
-        padding: 0px;
-        margin: 0px;
-        width: 300px;
-        background: white;
+      height: 30px;
+      float: left;
+      clear: both;
+      list-style: none;
+      padding: 0px;
+      margin: 0px;
+      width: 300px;
+      background: white;
     }
 
     .tabs-menu li {
-        height: 30px;
-        line-height: 30px;
-        float: left;
-        margin-right: 10px;
-        background-color: #ccc;
-        border-top: 1px solid #d4d4d1;
-        border-right: 1px solid #d4d4d1;
-        border-left: 1px solid #d4d4d1;
+      height: 30px;
+      line-height: 30px;
+      float: left;
+      margin-right: 10px;
+      background-color: #ccc;
+      border-top: 1px solid #d4d4d1;
+      border-right: 1px solid #d4d4d1;
+      border-left: 1px solid #d4d4d1;
     }
 
     .tabs-menu li.current {
-        position: relative;
-        background-color: #fff;
-        border-bottom: 1px solid #fff;
-        z-index: 5;
+      position: relative;
+      background-color: #fff;
+      border-bottom: 1px solid #fff;
+      z-index: 5;
     }
 
     .tabs-menu li a {
-        padding: 10px;
-        text-transform: uppercase;
-        color: #fff;
-        text-decoration: none; 
+      padding: 10px;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
     }
 
     .tabs-menu .current a {
-        color: #2e7da3;
+      color: #2e7da3;
     }
 
     .tab {
-        border-top: 1px solid #d4d4d1;
-        background-color: #fff;
-        float: left;
-        margin-bottom: 20px;
-        width: auto;
+      border-top: 1px solid #d4d4d1;
+      background-color: #fff;
+      float: left;
+      margin-bottom: 20px;
+      width: auto;
     }
 
     .tab-content {
-        width: 290px;
-        padding: 5px;
-        display: none;
+      width: 290px;
+      padding: 5px;
+      display: none;
     }
 
     #tab-1 {
-     display: block;   
+      display: block;
     }
   </style>
 </head>
 <body>
 
 <div id="container">
+  <div id="menu">
+    <label>Select Time:</label>
+    <select name="select-time" id="select-time">
+      <option value="60" selected>60</option>
+      <option value="180">180</option>
+      <option value="300">300</option>
+      <option value="900">900</option>
+      <option value="1800">1800</option>
+      <option value="3600">3600</option>
+      <option value="14400">14400</option>
+      <option value="21600">21600</option>
+      <option value="43200">43200</option>
+      <option value="86400">86400</option>
+      <option value="259200">259200</option>
+      <option value="604800">604800</option>
+    </select>
+  </div>
   <div id="chart" style="height: 600px; min-width: 310px"></div>
   <div id="popup" class="ui-widget-content">
     <div class="close-popup">X</div>
     <ul class="tabs-menu">
-        <li class="current"><a href="#tab-1">Tab 1</a></li>
-        <li><a href="#tab-2">Tab 2</a></li>
-        <li><a href="#tab-3">Tab 3</a></li>
+      <li class="current"><a href="#tab-1">Tab 1</a></li>
+      <li><a href="#tab-2">Tab 2</a></li>
+      <li><a href="#tab-3">Tab 3</a></li>
     </ul>
     <div class="tab">
-        <div id="tab-1" class="tab-content">
-          <p>click to sma</p>
-          <label>Value:</label> <input type="text" name="sma-value" class="sma-value" />
-        </div>
-        <div id="tab-2" class="tab-content">
-          <p>click to candlestick</p>
-          <label>open:</label> <input type="text" name="candlestick-open" class="candlestick-open" /><br />
-          <label>high:</label> <input type="text" name="candlestick-high" class="candlestick-high" /><br />
-          <label>low:</label> <input type="text" name="candlestick-low" class="candlestick-low" /><br />
-          <label>close:</label> <input type="text" name="candlestick-close" class="candlestick-close" /><br />
-        </div>
-        <div id="tab-3" class="tab-content">
-            <p>Duis egestas fermentum ipsum et commodo.</p>
-        </div>
+      <div id="tab-1" class="tab-content">
+        <p>click to sma</p>
+        <label>Value:</label> <input type="text" name="sma-value" class="sma-value" />
+      </div>
+      <div id="tab-2" class="tab-content">
+        <p>click to candlestick</p>
+        <label>Current value:</label> <input type="text" name="candlestick-current" class="candlestick-current" /><br />
+        <label>Open:</label> <input type="text" name="candlestick-open" class="candlestick-open" /><br />
+        <label>High:</label> <input type="text" name="candlestick-high" class="candlestick-high" /><br />
+        <label>Low:</label> <input type="text" name="candlestick-low" class="candlestick-low" /><br />
+        <label>Close:</label> <input type="text" name="candlestick-close" class="candlestick-close" /><br />
+      </div>
+      <div id="tab-3" class="tab-content">
+        <p>Duis egestas fermentum ipsum et commodo.</p>
+      </div>
     </div>
   </div>
 </div>
-
-
 
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -145,192 +161,430 @@ $(function() {
     $('#popup').hide();
   });
 
-});
+  Highcharts.createElement('link', {
+    href: 'https://fonts.googleapis.com/css?family=Unica+One',
+    rel: 'stylesheet',
+    type: 'text/css'
+  }, null, document.getElementsByTagName('head')[0]);
 
-// var url = 'https://www.highcharts.com/samples/data/aapl-ohlcv.json';
-// var url = 'https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=180&after=1522135440'
+  Highcharts.theme = {
+    colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
+      '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+    chart: {
+      backgroundColor: {
+        linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+        stops: [
+          [0, '#2a2a2b'],
+          [1, '#3e3e40']
+        ]
+      },
+      style: {
+        fontFamily: '\'Unica One\', sans-serif'
+      },
+      plotBorderColor: '#606063'
+    },
+    title: {
+      style: {
+        color: '#E0E0E3',
+        textTransform: 'uppercase',
+        fontSize: '20px'
+      }
+    },
+    subtitle: {
+      style: {
+        color: '#E0E0E3',
+        textTransform: 'uppercase'
+      }
+    },
+    xAxis: {
+      gridLineColor: '#707073',
+      labels: {
+        style: {
+          color: '#E0E0E3'
+        }
+      },
+      lineColor: '#707073',
+      minorGridLineColor: '#505053',
+      tickColor: '#707073',
+      title: {
+        style: {
+          color: '#A0A0A3'
 
-$.getJSON('https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=180&after=1522135440', function (full_data) {
+        }
+      }
+    },
+    yAxis: {
+      gridLineColor: '#707073',
+      labels: {
+        style: {
+          color: '#E0E0E3'
+        }
+      },
+      lineColor: '#707073',
+      minorGridLineColor: '#505053',
+      tickColor: '#707073',
+      tickWidth: 1,
+      title: {
+        style: {
+          color: '#A0A0A3'
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.85)',
+      style: {
+        color: '#F0F0F0'
+      }
+    },
+    plotOptions: {
+      series: {
+        dataLabels: {
+          color: '#B0B0B3'
+        },
+        marker: {
+          lineColor: '#333'
+        }
+      },
+      boxplot: {
+        fillColor: '#505053'
+      },
+      candlestick: {
+        lineColor: 'white'
+      },
+      errorbar: {
+        color: 'white'
+      }
+    },
+    legend: {
+      itemStyle: {
+        color: '#E0E0E3'
+      },
+      itemHoverStyle: {
+        color: '#FFF'
+      },
+      itemHiddenStyle: {
+        color: '#606063'
+      }
+    },
+    credits: {
+      style: {
+        color: '#666'
+      }
+    },
+    labels: {
+      style: {
+        color: '#707073'
+      }
+    },
+
+    drilldown: {
+      activeAxisLabelStyle: {
+        color: '#F0F0F3'
+      },
+      activeDataLabelStyle: {
+        color: '#F0F0F3'
+      }
+    },
+
+    navigation: {
+      buttonOptions: {
+        symbolStroke: '#DDDDDD',
+        theme: {
+          fill: '#505053'
+        }
+      }
+    },
+
+    // scroll charts
+    rangeSelector: {
+      buttonTheme: {
+        fill: '#505053',
+        stroke: '#000000',
+        style: {
+          color: '#CCC'
+        },
+        states: {
+          hover: {
+            fill: '#707073',
+            stroke: '#000000',
+            style: {
+              color: 'white'
+            }
+          },
+          select: {
+            fill: '#000003',
+            stroke: '#000000',
+            style: {
+              color: 'white'
+            }
+          }
+        }
+      },
+      inputBoxBorderColor: '#505053',
+      inputStyle: {
+        backgroundColor: '#333',
+        color: 'silver'
+      },
+      labelStyle: {
+        color: 'silver'
+      }
+    },
+
+    navigator: {
+      handles: {
+        backgroundColor: '#666',
+        borderColor: '#AAA'
+      },
+      outlineColor: '#CCC',
+      maskFill: 'rgba(255,255,255,0.1)',
+      series: {
+        color: '#7798BF',
+        lineColor: '#A6C7ED'
+      },
+      xAxis: {
+        gridLineColor: '#505053'
+      }
+    },
+
+    scrollbar: {
+      barBackgroundColor: '#808083',
+      barBorderColor: '#808083',
+      buttonArrowColor: '#CCC',
+      buttonBackgroundColor: '#606063',
+      buttonBorderColor: '#606063',
+      rifleColor: '#FFF',
+      trackBackgroundColor: '#404043',
+      trackBorderColor: '#404043'
+    },
+
+    // special colors for some of the
+    legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
+    background2: '#505053',
+    dataLabelsColor: '#B0B0B3',
+    textColor: '#C0C0C0',
+    contrastTextColor: '#F0F0F3',
+    maskColor: 'rgba(255,255,255,0.3)'
+  };
+
+  // Apply the theme
+  Highcharts.setOptions(Highcharts.theme);
+
+  var selectTime = $('#select-time').val();
+
+  $.getJSON('https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=' + selectTime, function (full_data) {
 
     // split the data set into ohlc and volume
-    data = full_data["result"]["180"]
+    var data = full_data["result"][selectTime];
 
     var ohlc = [],
-        volume = [],
-        dataLength = data.length,
-        // set the allowed units for data grouping
-        groupingUnits = [[
-            'week',                         // unit name
-            [1]                             // allowed multiples
-        ], [
-            'month',
-            [1, 2, 3, 4, 6]
-        ]],
+      volume = [],
+      dataLength = data.length,
+      // set the allowed units for data grouping
+      groupingUnits = [[
+        'week',                         // unit name
+        [1]                             // allowed multiples
+      ], [
+        'minute',
+        [1, 2, 3, 4, 6]
+      ]],
 
-        i = 0;
+      i = 0;
 
     for (i; i < dataLength; i += 1) {
-        ohlc.push([
-            data[i][0], // the date
-            data[i][1], // open
-            data[i][2], // high
-            data[i][3], // low
-            data[i][4] // close
-        ]);
+      ohlc.push([
+        data[i][0], // the date
+        data[i][1], // open
+        data[i][2], // high
+        data[i][3], // low
+        data[i][4] // close
+      ]);
 
-        volume.push([
-            data[i][0], // the date
-            data[i][5] // the volume
-        ]);
+      volume.push([
+        data[i][0], // the date
+        data[i][5] // the volume
+      ]);
     }
 
+    var lastTime = ohlc[ohlc.length - 1][0];
 
     // create the chart
-    Highcharts.stockChart('chart', {
+    stockChart = new Highcharts.stockChart('chart', {
 
-        // click in char  
-        // chart: {
-        //     events: {
-        //         click: function(event) {
-        //             alert (
-        //           'x: '+ Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].value) +', ' +
-        //           'y: '+ event.yAxis[0].value
-        //             );
-        //         }
-        //     }
-        // },
+      rangeSelector: {
+        selected: 2
+      },
 
-        rangeSelector: {
-            selected: 2
+      title: {
+        text: 'Bitcoin Historical Demo'
+      },
+
+      subtitle: {
+        text: 'With SMA and Volume by Price technical indicators'
+      },
+
+      yAxis: [{
+        startOnTick: false,
+        endOnTick: false,
+        labels: {
+          align: 'right',
+          x: -3
         },
-
         title: {
-            text: 'Bitcoin Historical Demo'
+          text: 'OHLC'
         },
-
-        subtitle: {
-            text: 'With SMA and Volume by Price technical indicators'
+        height: '60%',
+        lineWidth: 2,
+        resize: {
+          enabled: true
+        }
+      }, {
+        labels: {
+          align: 'right',
+          x: -3
         },
+        title: {
+          text: 'Volume'
+        },
+        top: '65%',
+        height: '35%',
+        offset: 0,
+        lineWidth: 2
+      }],
 
-        yAxis: [{
-            startOnTick: false,
-            endOnTick: false,
-            labels: {
-                align: 'right',
-                x: -3
-            },
-            title: {
-                text: 'OHLC'
-            },
-            height: '60%',
-            lineWidth: 2,
-            resize: {
-                enabled: true
+      tooltip: {
+        split: true
+      },
+
+      plotOptions: {
+        series: {
+          cursor: 'pointer',
+          dataGrouping: {
+            units: groupingUnits
+          },
+          point: {
+            events: {
+              click: function() {
+                $('#popup').show();
+                $('.tab-content').hide();
+                $('.tabs-menu li').removeClass('current');
+                if (this.series.userOptions.type === 'sma') {
+                  $('#tab-1').show();
+                  $('a[href^="#tab-1"]').parent().addClass('current');
+                  $('.sma-value').val(this.y);
+                } else if (this.series.userOptions.type === 'candlestick') {
+                  $('#tab-2').show();
+                  $('a[href^="#tab-2"]').parent().addClass('current');
+                  $('.candlestick-current').val(this.y);
+                  $('.candlestick-open').val(this.open);
+                  $('.candlestick-high').val(this.high);
+                  $('.candlestick-low').val(this.low);
+                  $('.candlestick-close').val(this.close);
+                }
+              }
             }
-        }, {
-            labels: {
-                align: 'right',
-                x: -3
-            },
-            title: {
-                text: 'Volume'
-            },
-            top: '65%',
-            height: '35%',
-            offset: 0,
-            lineWidth: 2
-        }],
+          }
+        }
+      },
 
-        tooltip: {
-            split: true
-        },
-
-        // plotOptions: {
-        //     series: {
-        //         dataGrouping: {
-        //             units: groupingUnits
-        //         }
-        //     }
-        // },
-
-        plotOptions: {
-            series: {
-                cursor: 'pointer',
-                dataGrouping: {
-                    units: groupingUnits
-                },
-                point: {
-                    events: {
-                        click: function() {
-                            $('#popup').show();
-                            $('.tab-content').hide();
-                            $('.tabs-menu li').removeClass("current");
-                            if (this.series.userOptions.type === 'sma') {
-                              $('#tab-1').show();
-                              $('a[href^="#tab-1"]').parent().addClass("current");
-                              $('.sma-value').val(this.y);
-                            } else if (this.series.userOptions.type === 'candlestick') {
-                              $('#tab-2').show();
-                              $('a[href^="#tab-2"]').parent().addClass("current");
-                              $('.candlestick-open').val(this.open);
-                              $('.candlestick-high').val(this.high);
-                              $('.candlestick-low').val(this.low);
-                              $('.candlestick-close').val(this.close);
-                            }
-                        },
-                        // mouseOver: function () {
-                        //     var chart = this.series.chart;
-                        //     if (!chart.lbl) {
-                        //         chart.lbl = chart.renderer.label('')
-                        //             .attr({
-                        //                 padding: 10,
-                        //                 r: 10,
-                        //                 fill: Highcharts.getOptions().colors[1]
-                        //             })
-                        //             .css({
-                        //                 color: '#FFFFFF'
-                        //             })
-                        //             .add();
-                        //     }
-                        //     chart.lbl
-                        //         .show()
-                        //         .attr({
-                        //             text: 'x: ' + this.x + ', y: ' + this.y
-                        //         });
-                        // }
-                    }
-                },
-                // events: {
-                //     mouseOut: function () {
-                //         if (this.chart.lbl) {
-                //             this.chart.lbl.hide();
-                //         }
-                //     }
-                // }
-            }
-        },
-
-        series: [{
-            type: 'candlestick',
-            name: 'AAPL',
-            id: 'aapl',
-            zIndex: 2,
-            data: ohlc
-        }, {
-            type: 'column',
-            name: 'Volume',
-            id: 'volume',
-            data: volume,
-            yAxis: 1
-        }, {
-            type: 'sma',
-            linkedTo: 'aapl',
-            zIndex: 1,
-            marker: {
-                enabled: false
-            }
-        }]
+      series: [{
+        type: 'candlestick',
+        name: 'BTCFX',
+        id: 'aapl',
+        zIndex: 2,
+        data: ohlc
+      }, {
+        type: 'column',
+        name: 'Volume',
+        id: 'volume',
+        data: volume,
+        yAxis: 1
+      }, {
+        type: 'sma',
+        linkedTo: 'aapl',
+        zIndex: 1,
+        marker: {
+          enabled: false
+        }
+      }]
     });
+
+    // change select time
+    $('#select-time').change(function () {
+      selectTime = $('#select-time').val();
+      $.getJSON('https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=' + selectTime, function (full_data) {
+        // split the data set into ohlc and volume
+        var newData = full_data["result"][selectTime];
+
+        ohlc = [];
+        volume = [];
+        var i = 0;
+
+        for (i; i < newData.length; i += 1) {
+          ohlc.push([
+            newData[i][0], // the date
+            newData[i][1], // open
+            newData[i][2], // high
+            newData[i][3], // low
+            newData[i][4] // close
+          ]);
+
+          volume.push([
+            newData[i][0], // the date
+            newData[i][5] // the volume
+          ]);
+        }
+
+        lastTime = ohlc[ohlc.length - 1][0];
+
+        stockChart.series[0].setData(ohlc, true);
+        stockChart.series[1].setData(volume, true);
+        stockChart.redraw();
+
+      });
+    });
+
+    window.setInterval(function(){
+      var url = 'https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=' + selectTime + '&after=' + lastTime;
+      $.getJSON(url, function (full_data) {
+        var last_data = full_data["result"][selectTime];
+        if (last_data.length > 0) {
+          console.log(last_data.length);
+          ohlc[ohlc.length - 1] = [
+            last_data[0][0], // the date
+            last_data[0][1], // open
+            last_data[0][2], // high
+            last_data[0][3], // low
+            last_data[0][4] // close
+          ];
+
+          volume[volume.length - 1] = [
+            last_data[0][0], // the date
+            last_data[0][5] // the volume
+          ];
+
+          if (last_data.length > 1) {
+            lastTime = last_data[1][0];
+            ohlc.push([
+              last_data[1][0], // the date
+              last_data[1][1], // open
+              last_data[1][2], // high
+              last_data[1][3], // low
+              last_data[1][4] // close
+            ]);
+
+            volume.push([
+              last_data[1][0], // the date
+              last_data[1][5] // the volume
+            ]);
+          }
+        }
+
+        stockChart.series[0].setData(ohlc, true);
+        stockChart.series[1].setData(volume, true);
+        stockChart.redraw();
+      });
+    }, 2000);
+  });
 });
 
 </script>
