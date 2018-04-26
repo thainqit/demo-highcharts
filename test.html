@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body>
+<div id="container" style="height: 700px; min-width: 310px"></div>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
+<script>
+  $.getJSON('https://api.cryptowat.ch/markets/bitflyer/btcfxjpy/ohlc?periods=60', function (fullData) {
+
+    var data = fullData['result']['60'];
+    Highcharts.stockChart('container', {
+
+      rangeSelector: {
+        selected: 2
+      },
+
+      title: {
+        text: 'AAPL Stock Price'
+      },
+
+      legend: {
+        enabled: true
+      },
+
+      plotOptions: {
+        series: {
+          showInLegend: true
+        }
+      },
+
+      series: [{
+        type: 'candlestick',
+        id: 'aapl',
+        name: 'AAPL Stock Price',
+        data: data
+      }, {
+        type: 'ema',
+        linkedTo: 'aapl'
+      }, {
+        type: 'ema',
+        linkedTo: 'aapl',
+        params: {
+          period: 50
+        }
+      }]
+    });
+  });
+</script>
+</body>
+</html>

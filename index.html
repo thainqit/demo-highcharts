@@ -6,67 +6,170 @@
 </head>
 <body>
 
-<div id="container">
-  <div id="menu" style="display: none;">
-    <label>Select Time:</label>
-    <select name="select-time" id="select-time">
-      <option value="60" selected>60</option>
-      <option value="180">180</option>
-      <option value="300">300</option>
-      <option value="900">900</option>
-      <option value="1800">1800</option>
-      <option value="3600">3600</option>
-      <option value="14400">14400</option>
-      <option value="21600">21600</option>
-      <option value="43200">43200</option>
-      <option value="86400">86400</option>
-      <option value="259200">259200</option>
-      <option value="604800">604800</option>
-    </select>
-  </div>
-  <div id="chart" style="height: 600px; min-height: 600px; min-width: 310px"></div>
-  <div id="popup" class="ui-widget-content">
-    <div class="close-popup">X</div>
-    <ul class="tabs-menu">
-      <li class="current"><a href="#tab-1">SMA</a></li>
-      <li><a href="#tab-2">ロシーく足</a></li>
-      <li><a href="#tab-3">オーダー</a></li>
-      <li><a href="#tab-4">通知</a></li>
-    </ul>
-    <div class="tab">
-      <div id="tab-1" class="tab-content">
-        <p>SMAをクリックした価格</p>
-        <label>Value:</label> <input type="text" name="sma-value" class="sma-value" />
-      </div>
-      <div id="tab-2" class="tab-content">
-        <label>ローシク足を洗濯したところの価格:</label> <input type="text" name="candlestick-current" class="candlestick-current" /><br />
-        <label>終値:</label> <input type="text" name="candlestick-open" class="candlestick-open" /><br />
-        <label>高値:</label> <input type="text" name="candlestick-high" class="candlestick-high" /><br />
-        <label>安値:</label> <input type="text" name="candlestick-low" class="candlestick-low" /><br />
-        <label>終値:</label> <input type="text" name="candlestick-close" class="candlestick-close" /><br />
-      </div>
-      <div id="tab-3" class="tab-content">
-        <p>オーダー</p>
-      </div>
-      <div id="tab-4" class="tab-content">
-        <p>通知</p>
-      </div>
-    </div>
-  </div>
-</div>
-
+<div id="container" style="height: 600px; min-width: 310px"></div>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script
-  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-  crossorigin="anonymous"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
-<script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
-<script src="https://code.highcharts.com/stock/indicators/volume-by-price.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/ichimoku-kinko-hyo.js"></script>
 
-<script type="text/javascript" src="./js/demo.js"></script>
+<script>
+  var stockChart = null;
+  var lastTime = null;
+  var ohlc = [],
+    volume = [];
+
+  $.getJSON('http://localhost:3000/data?periods=60', function (fullData) {
+    var data = fullData['result']['60'];
+
+    // split the data set into ohlc and volume
+    var dataLength = data.length,
+      i = 0;
+
+    for (i; i < dataLength; i += 1) {
+      ohlc.push([
+        data[i][0], // the date
+        data[i][1], // open
+        data[i][2], // high
+        data[i][3], // low
+        data[i][4] // close
+      ]);
+
+      volume.push([
+        data[i][0], // the date
+        data[i][5] // the volume
+      ]);
+    }
+
+    lastTime = ohlc[ohlc.length - 1][0];
+
+    stockChart = Highcharts.stockChart('container', {
+
+      rangeSelector: {
+        selected: 2
+      },
+
+      title: {
+        text: 'AAPL Stock Price'
+      },
+
+      legend: {
+        enabled: true
+      },
+
+      plotOptions: {
+        series: {
+          showInLegend: true
+        }
+      },
+
+      series: [{
+        type: 'candlestick',
+        id: 'aapl',
+        name: 'AAPL Stock Price',
+        data: ohlc
+      }, {
+        type: 'ikh',
+        linkedTo: 'aapl',
+        tenkanLine: {
+          styles: {
+            lineColor: 'lightblue'
+          }
+        },
+        kijunLine: {
+          styles: {
+            lineColor: 'darkred'
+          }
+        },
+        chikouLine: {
+          styles: {
+            lineColor: 'lightgreen'
+          }
+        },
+        senkouSpanA: {
+          styles: {
+            lineColor: 'green'
+          }
+        },
+        senkouSpanB: {
+          styles: {
+            lineColor: 'red'
+          }
+        },
+        senkouSpan: {
+          styles: {
+            fill: 'rgba(0, 255, 0, 0.1)'
+          }
+        }
+      }]
+    });
+  });
+
+  window.setInterval(function(){
+    var url = 'http://localhost:3000/data?periods=60&after=' + lastTime;
+
+    $.getJSON(url, function (full_data) {
+      var lastData = full_data["result"]['60'];
+      if(lastData) {
+        var lastDataLength = lastData.length;
+        console.log(lastDataLength);
+        if (lastDataLength === 1) {
+          // update last item
+          ohlc[ohlc.length - 1] = [
+            lastData[0][0], // the date
+            lastData[0][1], // open
+            lastData[0][2], // high
+            lastData[0][3], // low
+            lastData[0][4] // close
+          ];
+
+          volume[volume.length - 1] = [
+            lastData[0][0], // the date
+            lastData[0][5] // the volume
+          ];
+
+        } else if (lastDataLength > 1) {
+          lastTime = lastData[lastDataLength - 1][0];
+
+          // check and get list last data
+          var indexLastOhlc = lastData.findIndex(item => item[0] === ohlc[ohlc.length - 1][0]);
+          lastData =  lastData.slice(indexLastOhlc);
+
+          // remove last item
+          ohlc.splice(-1,1);
+          volume.splice(-1,1);
+
+          // append data item
+          var i = 0;
+          for (i; i < lastData.length; i += 1) {
+            ohlc.push([
+              lastData[i][0], // the date
+              lastData[i][1], // open
+              lastData[i][2], // high
+              lastData[i][3], // low
+              lastData[i][4] // close
+            ]);
+
+            volume.push([
+              lastData[i][0], // the date
+              lastData[i][5] // the volume
+            ]);
+          }
+        }
+
+        stockChart.series[0].setData(ohlc, true);
+        stockChart.series[1].setData(volume, true);
+        stockChart.redraw();
+      }
+    });
+  }, 5000);
+
+  function redrawChart(stockChart, ohlc, volume) {
+    stockChart.series[0].setData(ohlc, true);
+    stockChart.series[1].setData(volume, true);
+    stockChart.redraw();
+  }
+</script>
 </body>
 </html>
